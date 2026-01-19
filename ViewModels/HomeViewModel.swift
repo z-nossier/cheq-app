@@ -19,19 +19,11 @@ class HomeViewModel: ObservableObject {
     private let authService = AuthService.shared
     
     init() {
-        performMigrationIfNeeded()
         // Load receipts if user is already authenticated
         if authService.isAuthenticated {
         Task {
             await loadRecentReceipts()
             }
-        }
-    }
-    
-    /// Performs migration of old receipts to current user if needed
-    private func performMigrationIfNeeded() {
-        if let userId = authService.currentUser?.id {
-            storageService.migrateReceiptsIfNeeded(to: userId)
         }
     }
     
@@ -54,7 +46,7 @@ class HomeViewModel: ObservableObject {
         }
         
         do {
-            // Load receipts - will fail fast if Core Data model not found
+            // Load receipts
             let allReceipts = try await self.storageService.loadAllReceipts(userId: userId)
             
             print("📖 HomeViewModel: Loaded \(allReceipts.count) receipts")
@@ -73,18 +65,8 @@ class HomeViewModel: ObservableObject {
             print("❌ HomeViewModel: Error loading receipts: \(error.localizedDescription)")
             print("   Full error: \(error)")
             
-            // Provide user-friendly error messages
-            let userMessage: String
-            let errorDescription = error.localizedDescription.lowercased()
-            
-            // Check for Core Data model file errors
-            if errorDescription.contains("failed to load model") || errorDescription.contains("model named") {
-                userMessage = "Database not available. The app may need to be reinstalled."
-            } else if errorDescription.contains("persistent store") {
-                userMessage = "Storage error. Please restart the app."
-            } else {
-                userMessage = "Failed to load receipts: \(error.localizedDescription)"
-            }
+            // Provide user-friendly error message
+            let userMessage = "Failed to load receipts: \(error.localizedDescription)"
             
             await MainActor.run {
             recentReceipts = []

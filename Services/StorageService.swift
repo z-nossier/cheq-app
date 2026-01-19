@@ -10,24 +10,14 @@ import Foundation
 class StorageService: ObservableObject {
     static let shared = StorageService()
     
-    private let oldReceiptsKey = "storedReceipts" // Legacy key for migration
-    private let currencyKey = "userCurrency"
-    private let migrationCompletedKey = "receiptsMigrationCompleted"
-    private let coreDataMigrationCompletedKey = "coreDataMigrationCompleted"
-    
     private let backend: StorageServiceProtocol
     
     private init() {
-        // Initialize Core Data backend
-        self.backend = CoreDataStorageService()
+        // Initialize UserDefaults backend
+        self.backend = UserDefaultsStorageService()
     }
     
     // MARK: - Receipts Storage
-    
-    /// Generates a user-specific key for storing receipts (legacy UserDefaults)
-    private func receiptsKey(for userId: String) -> String {
-        return "receipts_\(userId)"
-    }
     
     /// Saves a receipt for a specific user. Stores all receipts (no limit).
     func saveReceipt(_ receipt: Receipt, userId: String) {
@@ -91,60 +81,6 @@ class StorageService: ObservableObject {
         let receipts = try await loadAllReceipts(userId: userId)
         for receipt in receipts {
             try await deleteReceipt(receipt.id, userId: userId)
-        }
-    }
-    
-    /// Migrates existing UserDefaults receipts to Core Data + CloudKit
-    /// Should be called once when the app starts with an authenticated user
-    func migrateReceiptsIfNeeded(to userId: String) {
-        // Check if Core Data migration has already been completed
-        if UserDefaults.standard.bool(forKey: coreDataMigrationCompletedKey) {
-            return
-        }
-        
-        Task {
-            await performCoreDataMigration(userId: userId)
-        }
-    }
-    
-    /// Performs migration from UserDefaults to Core Data
-    private func performCoreDataMigration(userId: String) async {
-        // Check if old receipts exist in UserDefaults
-        let key = receiptsKey(for: userId)
-        guard let data = UserDefaults.standard.data(forKey: key),
-              let receipts = try? JSONDecoder().decode([Receipt].self, from: data),
-              !receipts.isEmpty else {
-            // Also check legacy key
-            guard let legacyData = UserDefaults.standard.data(forKey: oldReceiptsKey),
-                  let legacyReceipts = try? JSONDecoder().decode([Receipt].self, from: legacyData),
-                  !legacyReceipts.isEmpty else {
-                // Mark migration as completed even if no old receipts exist
-                UserDefaults.standard.set(true, forKey: coreDataMigrationCompletedKey)
-                return
-            }
-            
-            // Migrate legacy receipts
-            await migrateReceipts(legacyReceipts, userId: userId)
-            UserDefaults.standard.removeObject(forKey: oldReceiptsKey)
-            UserDefaults.standard.set(true, forKey: coreDataMigrationCompletedKey)
-            return
-        }
-        
-        // Migrate user-specific receipts
-        await migrateReceipts(receipts, userId: userId)
-        
-        // Mark migration as completed
-        UserDefaults.standard.set(true, forKey: coreDataMigrationCompletedKey)
-    }
-    
-    /// Migrates an array of receipts to Core Data
-    private func migrateReceipts(_ receipts: [Receipt], userId: String) async {
-        for receipt in receipts {
-            do {
-                try await backend.saveReceipt(receipt, userId: userId)
-            } catch {
-                print("Error migrating receipt \(receipt.id): \(error)")
-            }
         }
     }
     

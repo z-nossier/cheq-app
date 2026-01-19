@@ -46,11 +46,11 @@ class SummaryViewModel: ObservableObject {
         saveCompleted = false
         
         do {
-            // Save receipt - simplified to use view context directly
+            // Save receipt
             try await storageService.saveReceiptAsync(receipt, userId: userId)
             print("✅ SummaryViewModel: Receipt saved successfully")
             
-            // Post notification immediately after save completes (merge is already done)
+            // Post notification after save completes
             NotificationCenter.default.post(name: NSNotification.Name("ReceiptSaved"), object: nil)
             print("✅ SummaryViewModel: ReceiptSaved notification posted")
             
