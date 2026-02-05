@@ -119,7 +119,7 @@ struct ConfirmReceiptView: View {
                         },
                         onDone: { name, unitPrice, quantity in
                             // #region agent log
-                            if let logFile = FileHandle(forWritingAtPath: "/Users/zosman/cheq/.cursor/debug.log") {
+                            if let logFile = FileHandle(forWritingAtPath: "/Users/zosman/cheq-app/.cursor/debug.log") {
                                 let logData = try! JSONSerialization.data(withJSONObject: [
                                     "location": "ConfirmReceiptView.swift:120",
                                     "message": "onDone closure called",
@@ -150,7 +150,7 @@ struct ConfirmReceiptView: View {
                                 commitDraft: true
                             )
                             // #region agent log
-                            if let logFile = FileHandle(forWritingAtPath: "/Users/zosman/cheq/.cursor/debug.log") {
+                            if let logFile = FileHandle(forWritingAtPath: "/Users/zosman/cheq-app/.cursor/debug.log") {
                                 let updatedItem = viewModel.receipt.items.first(where: { $0.id == itemId })
                                 let logData = try! JSONSerialization.data(withJSONObject: [
                                     "location": "ConfirmReceiptView.swift:131",
@@ -342,7 +342,7 @@ struct ReceiptItemRow: View {
     var currentItem: ReceiptItem {
         let found = viewModel.receipt.items.first(where: { $0.id == item.id }) ?? item
         // #region agent log
-        if let logFile = FileHandle(forWritingAtPath: "/Users/zosman/cheq/.cursor/debug.log") {
+        if let logFile = FileHandle(forWritingAtPath: "/Users/zosman/cheq-app/.cursor/debug.log") {
             let logData = try! JSONSerialization.data(withJSONObject: [
                 "location": "ConfirmReceiptView.swift:394",
                 "message": "currentItem computed",
@@ -424,7 +424,7 @@ struct ReceiptItemRow: View {
         let itemQuantity = currentItem.quantity
         let itemUnitPrice = currentItem.unitPrice
         // #region agent log
-        if let logFile = FileHandle(forWritingAtPath: "/Users/zosman/cheq/.cursor/debug.log") {
+        if let logFile = FileHandle(forWritingAtPath: "/Users/zosman/cheq-app/.cursor/debug.log") {
             let logData = try! JSONSerialization.data(withJSONObject: [
                 "location": "ConfirmReceiptView.swift:351",
                 "message": "ReceiptItemRow body evaluated",
@@ -450,7 +450,7 @@ struct ReceiptItemRow: View {
         return contentView
             .onChange(of: viewModel.receipt.items) {
                 // #region agent log
-                if let logFile = FileHandle(forWritingAtPath: "/Users/zosman/cheq/.cursor/debug.log") {
+                if let logFile = FileHandle(forWritingAtPath: "/Users/zosman/cheq-app/.cursor/debug.log") {
                     let logData = try! JSONSerialization.data(withJSONObject: [
                         "location": "ConfirmReceiptView.swift:353",
                         "message": "onChange receipt.items triggered",
@@ -608,7 +608,7 @@ struct ReceiptItemRow: View {
                         Spacer()
                         Button {
                             // #region agent log
-                            if let logFile = FileHandle(forWritingAtPath: "/Users/zosman/cheq/.cursor/debug.log") {
+                            if let logFile = FileHandle(forWritingAtPath: "/Users/zosman/cheq-app/.cursor/debug.log") {
                                 let logData = try! JSONSerialization.data(withJSONObject: [
                                     "location": "ConfirmReceiptView.swift:496",
                                     "message": "Done button tapped",
@@ -633,7 +633,7 @@ struct ReceiptItemRow: View {
                             // Pass current values directly to onDone - this will commit the changes
                             let validQuantity = max(1, quantity)
                             // #region agent log
-                            if let logFile = FileHandle(forWritingAtPath: "/Users/zosman/cheq/.cursor/debug.log") {
+                            if let logFile = FileHandle(forWritingAtPath: "/Users/zosman/cheq-app/.cursor/debug.log") {
                                 let logData = try! JSONSerialization.data(withJSONObject: [
                                     "location": "ConfirmReceiptView.swift:499",
                                     "message": "Calling onDone",
@@ -658,7 +658,7 @@ struct ReceiptItemRow: View {
                             // After onDone updates the view model, sync local state with the updated item
                             // This ensures the non-editing view displays the correct values
                             // #region agent log
-                            if let logFile = FileHandle(forWritingAtPath: "/Users/zosman/cheq/.cursor/debug.log") {
+                            if let logFile = FileHandle(forWritingAtPath: "/Users/zosman/cheq-app/.cursor/debug.log") {
                                 let logData = try! JSONSerialization.data(withJSONObject: [
                                     "location": "ConfirmReceiptView.swift:502",
                                     "message": "After onDone - syncing state",

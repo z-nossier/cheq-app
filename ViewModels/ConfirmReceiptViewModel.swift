@@ -93,7 +93,7 @@ class ConfirmReceiptViewModel: ObservableObject {
     
     func updateItem(id: UUID, name: String? = nil, unitPrice: Decimal? = nil, quantity: Int? = nil, commitDraft: Bool = false) {
         // #region agent log
-        if let logFile = FileHandle(forWritingAtPath: "/Users/zosman/cheq/.cursor/debug.log") {
+        if let logFile = FileHandle(forWritingAtPath: "/Users/zosman/cheq-app/.cursor/debug.log") {
             let logData = try! JSONSerialization.data(withJSONObject: [
                 "location": "ConfirmReceiptViewModel.swift:94",
                 "message": "updateItem called",
@@ -117,7 +117,7 @@ class ConfirmReceiptViewModel: ObservableObject {
         // #endregion
         guard let index = receipt.items.firstIndex(where: { $0.id == id }) else {
             // #region agent log
-            if let logFile = FileHandle(forWritingAtPath: "/Users/zosman/cheq/.cursor/debug.log") {
+            if let logFile = FileHandle(forWritingAtPath: "/Users/zosman/cheq-app/.cursor/debug.log") {
                 let logData = try! JSONSerialization.data(withJSONObject: [
                     "location": "ConfirmReceiptViewModel.swift:95",
                     "message": "updateItem - item not found",
@@ -164,7 +164,7 @@ class ConfirmReceiptViewModel: ObservableObject {
             // Reassign the entire receipt with updated items and totals in a single operation
             // This is necessary because Receipt is a struct, so modifying nested properties doesn't trigger @Published
             // #region agent log
-            if let logFile = FileHandle(forWritingAtPath: "/Users/zosman/cheq/.cursor/debug.log") {
+            if let logFile = FileHandle(forWritingAtPath: "/Users/zosman/cheq-app/.cursor/debug.log") {
                 let logData = try! JSONSerialization.data(withJSONObject: [
                     "location": "ConfirmReceiptViewModel.swift:121",
                     "message": "Before receipt reassignment",
@@ -199,7 +199,7 @@ class ConfirmReceiptViewModel: ObservableObject {
                 people: receipt.people
             )
             // #region agent log
-            if let logFile = FileHandle(forWritingAtPath: "/Users/zosman/cheq/.cursor/debug.log") {
+            if let logFile = FileHandle(forWritingAtPath: "/Users/zosman/cheq-app/.cursor/debug.log") {
                 let logData = try! JSONSerialization.data(withJSONObject: [
                     "location": "ConfirmReceiptViewModel.swift:132",
                     "message": "After receipt reassignment",
